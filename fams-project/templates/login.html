@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height">
 
-<title>CAPI Login UI</title>
+<title>CAPI Login UI - Functional Demo</title>
 
 <!-- Poppins -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -41,8 +41,6 @@ body{
     padding:20px;
 }
 
-/* ================= MAIN CONTAINER (FULL WIDTH) ================= */
-
 .container{
     width:100%;
     max-width:1200px;
@@ -65,8 +63,6 @@ body{
     border-radius:20px;
 }
 
-/* ================= SCREEN ================= */
-
 .screen{
     display:flex;
     background:white;
@@ -76,8 +72,6 @@ body{
     width:100%;
 }
 
-/* ================= LEFT SIDE ================= */
-
 .left{
     width:50%;
     position:relative;
@@ -86,8 +80,6 @@ body{
     padding:45px 35px;
     color:white;
 }
-
-/* ===== Animated Bubbles ===== */
 
 .bubble1{
     position:absolute;
@@ -172,8 +164,6 @@ body{
     100%{transform:translateY(0);}
 }
 
-/* ===== Dots ===== */
-
 .dots{
     position:absolute;
     width:60px;
@@ -191,8 +181,6 @@ body{
     bottom:45px;
     left:40px;
 }
-
-/* ===== Small Ring ===== */
 
 .ring{
     position:absolute;
@@ -216,8 +204,6 @@ body{
     animation:updown 5s ease-in-out infinite;
 }
 
-/* ================= LOGO ================= */
-
 .logo{
     display:flex;
     align-items:center;
@@ -238,8 +224,6 @@ body{
     letter-spacing:0.5px;
 }
 
-/* ================= TEXT ================= */
-
 .system{
     font-family:'Alice', serif;
     font-size:18px;
@@ -259,8 +243,14 @@ body{
     color:white;
 }
 
-
-/* ================= RIGHT SIDE ================= */
+.line{
+    width:140px;
+    height:2px;
+    background:rgba(255,255,255,0.5);
+    position:relative;
+    z-index:10;
+    margin-top:20px;
+}
 
 .right{
     width:50%;
@@ -276,15 +266,13 @@ body{
     max-width:380px;
 }
 
-/* ===== Centered Welcome ===== */
-
 .welcome{
     text-align:center;
     margin-bottom:35px;
 }
 
 .welcome h1{
-    font-family:'Alice', sans-serif;
+    font-family:'Yeseva One', cursive;
     background:linear-gradient(180deg, #071b5e 0%, #4a7aff 100%);
     -webkit-background-clip:text;
     background-clip:text;
@@ -299,8 +287,6 @@ body{
     color:#888;
     font-size:14px;
 }
-
-/* ================= INPUT ================= */
 
 .inputGroup{
     margin-bottom:20px;
@@ -330,8 +316,6 @@ body{
     border-color:#4a7aff;
     box-shadow:0 0 0 3px rgba(74,122,255,0.15);
 }
-
-/* ================= OPTIONS ================= */
 
 .options{
     display:flex;
@@ -366,8 +350,6 @@ body{
     color:#071b5e;
 }
 
-/* ================= BUTTON (Darker bottom, lighter top) ================= */
-
 .loginBtn{
     width:100%;
     padding:14px;
@@ -388,8 +370,6 @@ body{
     background:linear-gradient(180deg, #6a83ee 0%, #0a204d 100%);
 }
 
-/* ================= DIVIDER ================= */
-
 .divider{
     display:flex;
     align-items:center;
@@ -409,8 +389,6 @@ body{
 .divider span{
     margin:0 10px;
 }
-
-/* ================= SOCIAL ================= */
 
 .socials{
     display:flex;
@@ -447,8 +425,6 @@ body{
     color:#2ca24c;
 }
 
-/* ================= FOOTER ================= */
-
 .footer{
     margin-top:28px;
     text-align:center;
@@ -456,22 +432,17 @@ body{
     color:#aaa;
 }
 
-/* ================= RESPONSIVE ================= */
-
 @media(max-width:900px){
     .screen{
         flex-direction:column;
     }
-
     .left,
     .right{
         width:100%;
     }
-
     .heading{
         font-size:40px;
     }
-
     .left{
         padding:35px 25px;
     }
@@ -481,15 +452,12 @@ body{
     body{
         padding:10px;
     }
-    
     .container{
         padding:10px;
     }
-    
     .heading{
         font-size:32px;
     }
-    
     .welcome h1{
         font-size:38px;
     }
@@ -501,146 +469,122 @@ body{
 <body>
 
 <div class="container">
-
     <div class="screen">
-
         <!-- LEFT -->
         <div class="left">
-
-            <!-- Animated Shapes -->
             <div class="bubble1"></div>
-            <div class="bubble2">
-                <div class="bubble2-inner"></div>
-                <div class="bubble2-ring-bubble"></div>
-            </div>
+            <div class="bubble2"></div>
             <div class="bubble3"></div>
-
             <div class="smallBubble sb1"></div>
             <div class="smallBubble sb2"></div>
-
             <div class="dots d1"></div>
             <div class="dots d2"></div>
+            <div class="ring r1"></div>
+            <div class="ring r2"></div>
 
-            <div class="ring r1">
-                <div class="r1-inner"></div>
-            </div>
-            <div class="ring r2">
-             <div class="r2-inner"></div>
-            </div>
-
-            <!-- Logo -->
             <div class="logo">
                 <img src="capi-logo.png" alt="CAPI Logo" id="capiLogo">
                 <span>CAPI SDN. BHD.</span>
             </div>
-
-            <!-- Text -->
-            <div class="system">
-                Fixed Asset Management System
-            </div>
-
-            <div class="heading">
-                Secure Access<br>
-                Smarter Control
-            </div>
-
+            <div class="system">Fixed Asset Management System</div>
+            <div class="heading">Secure Access<br>Smarter Control</div>
             <div class="line"></div>
-
         </div>
 
         <!-- RIGHT -->
         <div class="right">
-
             <div class="formBox">
-
-                <!-- Centered Welcome (Gradient colour, Alice font) -->
                 <div class="welcome">
-                    <h1 style="font-family: 'Yeseva One', cursive; font-weight: normal;">Welcome !</strong></h1>
+                    <h1 style="font-family: 'Yeseva One', cursive; font-weight: normal;">Welcome !</h1>
                     <p>Please login to your account.</p>
                 </div>
 
-                <!-- FORM -->
                 <form id="loginForm">
-
                     <div class="inputGroup">
                         <label><strong>Email Address</strong></label>
-                        <input 
-                            type="email"
-                            id="emailInput"
-                            placeholder="Enter your email"
-                            required>
+                        <input type="email" id="emailInput" placeholder="Enter your email" required>
                     </div>
-
                     <div class="inputGroup">
                         <label><strong>Password</strong></label>
-                        <input 
-                            type="password"
-                            id="passwordInput"
-                            placeholder="Enter your password"
-                            required>
+                        <input type="password" id="passwordInput" placeholder="Enter your password" required>
                     </div>
-
                     <div class="options">
                         <label class="checkbox-label">
-                            <input type="checkbox" id="rememberCheckbox">
-                            Remember me
+                            <input type="checkbox" id="rememberCheckbox"> Remember me
                         </label>
                         <a class="forgot-link" id="forgotPasswordLink">Forgot password?</a>
                     </div>
-
-                    <button type="submit" class="loginBtn">
-                        Login
-                    </button>
-
+                    <button type="submit" class="loginBtn">Login</button>
                 </form>
 
-                <!-- Divider -->
-                <div class="divider">
-                    <span>or continue with</span>
-                </div>
-
-                <!-- Social Buttons -->
+                <div class="divider"><span>or continue with</span></div>
                 <div class="socials">
-
-                    <button class="socialBtn" id="googleBtn">
-                        <i class="fa-brands fa-google google"></i>
-                    </button>
-
-                    <button class="socialBtn" id="facebookBtn">
-                        <i class="fa-brands fa-facebook facebook"></i>
-                    </button>
-
-                    <button class="socialBtn" id="emailLoginBtn">
-                        <i class="fa-regular fa-envelope email"></i>
-                    </button>
-
+                    <button class="socialBtn" id="googleBtn"><i class="fa-brands fa-google google"></i></button>
+                    <button class="socialBtn" id="facebookBtn"><i class="fa-brands fa-facebook facebook"></i></button>
+                    <button class="socialBtn" id="emailLoginBtn"><i class="fa-regular fa-envelope email"></i></button>
                 </div>
-
-                <!-- Footer -->
-                <div class="footer">
-                    © 2026 Capi Sdn. Bhd. All rights reserved.
-                </div>
-
+                <div class="footer">© 2026 Capi Sdn. Bhd. All rights reserved.</div>
             </div>
-
         </div>
-
     </div>
-
 </div>
 
 <script>
+// ==================== SIMPLE DATABASE (STORED IN BROWSER) ====================
+// This creates a working login system without needing a backend server
+
+// Default users
+const defaultUsers = [
+    { email: "admin@capi.com", password: "admin123" },
+    { email: "user@capi.com", password: "password123" }
+];
+
+// Initialize users in localStorage if not exists
+if (!localStorage.getItem('users')) {
+    localStorage.setItem('users', JSON.stringify(defaultUsers));
+}
 
 // ==================== LOGO LOAD ====================
 const logoImg = document.getElementById('capiLogo');
 logoImg.src = "capi-logo.png";
-
 logoImg.onerror = function() {
     this.style.display = 'none';
 };
 
-// ==================== REMEMBER ME ====================
+// ==================== CHECK IF ALREADY LOGGED IN ====================
+function checkSession() {
+    const loggedInUser = localStorage.getItem('loggedInUser');
+    if (loggedInUser) {
+        showDashboard(loggedInUser);
+    }
+}
 
+function showDashboard(email) {
+    const formBox = document.querySelector('.formBox');
+    formBox.innerHTML = `
+        <div style="text-align: center; padding: 40px;">
+            <i class="fa-solid fa-circle-check" style="font-size: 64px; color: #2ca24c;"></i>
+            <h2 style="margin: 20px 0; color: #071b5e;">Welcome back!</h2>
+            <p style="margin-bottom: 20px;">Logged in as: <strong>${email}</strong></p>
+            <button id="logoutBtn" class="loginBtn" style="background: linear-gradient(180deg, #dc3545, #a71d2a); margin-bottom: 10px;">Logout</button>
+            <button id="goToSystemBtn" class="loginBtn" style="background: linear-gradient(180deg, #28a745, #1e7e34);">Go to Dashboard</button>
+        </div>
+    `;
+    
+    document.getElementById('logoutBtn')?.addEventListener('click', logout);
+    document.getElementById('goToSystemBtn')?.addEventListener('click', () => {
+        alert('Asset Management Dashboard - Coming Soon!\n\nYou are successfully logged in as ' + email);
+    });
+}
+
+function logout() {
+    localStorage.removeItem('loggedInUser');
+    localStorage.removeItem('savedEmail');
+    localStorage.removeItem('savedPassword');
+    window.location.reload();
+}
+
+// ==================== REMEMBER ME ====================
 const emailInput = document.getElementById('emailInput');
 const passwordInput = document.getElementById('passwordInput');
 const rememberCheckbox = document.getElementById('rememberCheckbox');
@@ -648,263 +592,99 @@ const rememberCheckbox = document.getElementById('rememberCheckbox');
 window.addEventListener('DOMContentLoaded', function() {
     const savedEmail = localStorage.getItem('savedEmail');
     const savedPassword = localStorage.getItem('savedPassword');
-    const rememberChecked = localStorage.getItem('rememberMe') === 'true';
     
-    if (rememberChecked && savedEmail && savedPassword) {
+    if (savedEmail && savedPassword) {
         emailInput.value = savedEmail;
         passwordInput.value = savedPassword;
         rememberCheckbox.checked = true;
     }
+    checkSession();
 });
 
-// ==================== LOGIN ====================
-
+// ==================== LOGIN FUNCTION (WORKING!) ====================
 document.getElementById("loginForm").addEventListener("submit", function(e){
     e.preventDefault();
     
-    const email = emailInput.value;
+    const email = emailInput.value.trim();
     const password = passwordInput.value;
+    const remember = rememberCheckbox.checked;
     
     if (!email || !password) {
         alert("Please enter both email and password");
         return;
     }
     
-    if (rememberCheckbox.checked) {
-        localStorage.setItem('savedEmail', email);
-        localStorage.setItem('savedPassword', password);
-        localStorage.setItem('rememberMe', 'true');
-    } else {
-        localStorage.removeItem('savedEmail');
-        localStorage.removeItem('savedPassword');
-        localStorage.setItem('rememberMe', 'false');
-    }
+    // Get users from localStorage
+    const users = JSON.parse(localStorage.getItem('users')) || [];
     
-    alert("Login Successful!");
+    // Find user
+    const user = users.find(u => u.email === email && u.password === password);
+    
+    if (user) {
+        // Login successful
+        localStorage.setItem('loggedInUser', email);
+        
+        if (remember) {
+            localStorage.setItem('savedEmail', email);
+            localStorage.setItem('savedPassword', password);
+        } else {
+            localStorage.removeItem('savedEmail');
+            localStorage.removeItem('savedPassword');
+        }
+        
+        showDashboard(email);
+    } else {
+        alert("Invalid email or password!\n\nDemo credentials:\nEmail: admin@capi.com\nPassword: admin123\n\nOr register a new account below.");
+    }
 });
 
-// ==================== FORGOT PASSWORD ====================
-
-document.getElementById("forgotPasswordLink").addEventListener("click", function(e){
+// ==================== REGISTER NEW USER ====================
+// Add a register link to the forgot password area
+const forgotLink = document.getElementById('forgotPasswordLink');
+forgotLink.textContent = 'Register / Forgot Password?';
+forgotLink.addEventListener("click", function(e){
     e.preventDefault();
     
-    const resetWindow = window.open('', '_blank', 'width=500,height=550,left=200,top=100');
-    resetWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Reset Password - CAPI FAMS</title>
-            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-            <style>
-                body {
-                    font-family: 'Poppins', Arial, sans-serif;
-                    background: linear-gradient(180deg, #071b5e, #4a7aff);
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    min-height: 100vh;
-                    margin: 0;
-                    padding: 20px;
+    const action = confirm("Do you want to register a new account?\n\nClick OK to Register\nClick Cancel to Reset Password");
+    
+    if (action) {
+        // REGISTER
+        const newEmail = prompt("Enter your email address:");
+        if (newEmail) {
+            const newPassword = prompt("Enter your password (min 6 characters):");
+            if (newPassword && newPassword.length >= 6) {
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                const existing = users.find(u => u.email === newEmail);
+                
+                if (existing) {
+                    alert("Email already exists! Please login.");
+                } else {
+                    users.push({ email: newEmail, password: newPassword });
+                    localStorage.setItem('users', JSON.stringify(users));
+                    alert("Registration successful! Please login with your new credentials.");
                 }
-                .reset-container {
-                    background: white;
-                    padding: 40px;
-                    border-radius: 20px;
-                    width: 380px;
-                    text-align: center;
-                    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
-                }
-                h2 {
-                    background: linear-gradient(180deg, #071b5e, #4a7aff);
-                    -webkit-background-clip: text;
-                    background-clip: text;
-                    color: transparent;
-                    margin-bottom: 10px;
-                }
-                p {
-                    color: #666;
-                    margin-bottom: 25px;
-                    font-size: 14px;
-                }
-                input {
-                    width: 100%;
-                    padding: 12px 18px;
-                    border-radius: 40px;
-                    border: 1.5px solid #e0e0e0;
-                    margin-bottom: 20px;
-                    font-size: 14px;
-                    box-sizing: border-box;
-                }
-                input:focus {
-                    outline: none;
-                    border-color: #4a7aff;
-                }
-                button {
-                    width: 100%;
-                    padding: 12px;
-                    border-radius: 40px;
-                    border: none;
-                    background: linear-gradient(180deg, #7a93ff, #1a3a8a);
-                    color: white;
-                    font-size: 15px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    margin-bottom: 12px;
-                }
-                button:hover {
-                    background: linear-gradient(180deg, #6a83ee, #0f2d6e);
-                }
-                .close-btn {
-                    background: #ccc;
-                    color: #333;
-                }
-                .close-btn:hover {
-                    background: #aaa;
-                }
-                .message {
-                    font-size: 12px;
-                    margin-top: 10px;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="reset-container">
-                <h2>Reset Password</h2>
-                <p>Enter your email address to receive password reset instructions.</p>
-                <input type="email" id="resetEmail" placeholder="Email address">
-                <button id="sendResetBtn">Send Reset Link</button>
-                <button class="close-btn" onclick="window.close()">Close</button>
-                <div id="resetMessage" class="message"></div>
-            </div>
-            <script>
-                document.getElementById('sendResetBtn').addEventListener('click', function() {
-                    const email = document.getElementById('resetEmail').value;
-                    if (!email) {
-                        document.getElementById('resetMessage').textContent = 'Please enter your email address.';
-                        document.getElementById('resetMessage').style.color = 'red';
-                    } else {
-                        document.getElementById('resetMessage').textContent = 'Reset link sent to ' + email;
-                        document.getElementById('resetMessage').style.color = '#1a3a8a';
-                        setTimeout(() => window.close(), 2000);
-                    }
-                });
-            <\/script>
-        </body>
-        </html>
-    `);
+            } else {
+                alert("Password must be at least 6 characters.");
+            }
+        }
+    } else {
+        // FORGOT PASSWORD
+        alert("Password Reset\n\nIf you forgot your password, please contact your administrator.\n\nDemo credentials:\nEmail: admin@capi.com\nPassword: admin123");
+    }
 });
 
-// ==================== SOCIAL LOGIN (No alerts - opens window only) ====================
-
+// ==================== SOCIAL LOGIN ====================
 document.getElementById("googleBtn").addEventListener("click", function() {
-    window.open('https://accounts.google.com/o/oauth2/v2/auth?client_id=demo&redirect_uri=http://localhost:5000/callback&response_type=code&scope=email%20profile', '_blank', 'width=500,height=600,left=200,top=100');
+    alert("Social login coming soon.\n\nPlease use email/password for demo.");
 });
 
 document.getElementById("facebookBtn").addEventListener("click", function() {
-    window.open('https://www.facebook.com/v12.0/dialog/oauth?client_id=demo&redirect_uri=http://localhost:5000/callback&scope=email', '_blank', 'width=500,height=600,left=200,top=100');
+    alert("Social login coming soon.\n\nPlease use email/password for demo.");
 });
 
 document.getElementById("emailLoginBtn").addEventListener("click", function() {
-    const emailWindow = window.open('', '_blank', 'width=450,height=500,left=200,top=100');
-    emailWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Email Sign In - CAPI FAMS</title>
-            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-            <style>
-                body {
-                    font-family: 'Poppins', Arial, sans-serif;
-                    background: linear-gradient(180deg, #071b5e, #4a7aff);
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    min-height: 100vh;
-                    margin: 0;
-                    padding: 20px;
-                }
-                .login-container {
-                    background: white;
-                    padding: 40px;
-                    border-radius: 20px;
-                    width: 350px;
-                    text-align: center;
-                    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
-                }
-                h2 {
-                    background: linear-gradient(180deg, #071b5e, #4a7aff);
-                    -webkit-background-clip: text;
-                    background-clip: text;
-                    color: transparent;
-                    margin-bottom: 10px;
-                }
-                p {
-                    color: #666;
-                    margin-bottom: 25px;
-                    font-size: 14px;
-                }
-                input {
-                    width: 100%;
-                    padding: 12px 18px;
-                    border-radius: 40px;
-                    border: 1.5px solid #e0e0e0;
-                    margin-bottom: 15px;
-                    box-sizing: border-box;
-                }
-                input:focus {
-                    outline: none;
-                    border-color: #4a7aff;
-                }
-                button {
-                    width: 100%;
-                    padding: 12px;
-                    border-radius: 40px;
-                    border: none;
-                    background: linear-gradient(180deg, #7a93ff, #1a3a8a);
-                    color: white;
-                    font-size: 15px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    margin-bottom: 10px;
-                }
-                button:hover {
-                    background: linear-gradient(180deg, #6a83ee, #0f2d6e);
-                }
-                .close-btn {
-                    background: #ccc;
-                    color: #333;
-                }
-                .close-btn:hover {
-                    background: #aaa;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="login-container">
-                <h2>Email Sign In</h2>
-                <p>Sign in with your email account</p>
-                <input type="email" id="loginEmail" placeholder="Email address">
-                <input type="password" id="loginPassword" placeholder="Password">
-                <button id="signInBtn">Sign In</button>
-                <button class="close-btn" onclick="window.close()">Close</button>
-            </div>
-            <script>
-                document.getElementById('signInBtn').addEventListener('click', function() {
-                    const email = document.getElementById('loginEmail').value;
-                    const password = document.getElementById('loginPassword').value;
-                    if (!email || !password) {
-                        alert('Please enter both email and password');
-                    } else {
-                        alert('Login successful! Welcome ' + email);
-                        window.close();
-                    }
-                });
-            <\/script>
-        </body>
-        </html>
-    `);
+    alert("Please use the main login form above.\n\nDemo: admin@capi.com / admin123");
 });
-
 </script>
 
 </body>
