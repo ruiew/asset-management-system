@@ -14,12 +14,12 @@ Manages company assets, assignments, maintenance records, and generates reports.
 
 					🔐 LOGIN CREDENTIALS
 -----------------------------------------------------------------------------------------------
-ADMIN ACCOUNT:
-  Email: admin@capi.com
+ADMIN ACCOUNT
+  Email   : admin@capi.com
   Password: admin123
 
-STAFF ACCOUNT:
-  Email: user@capi.com
+STAFF ACCOUNT
+  Email   : user@capi.com
   Password: password123
 
 
