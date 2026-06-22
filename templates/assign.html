@@ -67,7 +67,7 @@
 </div>
 
 <script>
-// ========== FIXED: Asset Selection with Deselect ==========
+
 function selectAsset(element) {
     // Check if already selected
     const isSelected = element.style.background === '#e8f0fe' || 
@@ -95,7 +95,6 @@ function selectAsset(element) {
     checkSelection();
 }
 
-// ========== FIXED: Staff Selection with Deselect ==========
 function selectStaff(element) {
     // Check if already selected
     const isSelected = element.style.background === '#e8f0fe' || 
@@ -129,7 +128,7 @@ function checkSelection() {
     document.getElementById('confirmBtn').disabled = !(assetId && userId);
 }
 
-// ========== FIXED: Loading State on Submit ==========
+
 document.getElementById('assignForm')?.addEventListener('submit', function() {
     const btn = document.getElementById('confirmBtn');
     if (!btn.disabled) {

@@ -32,7 +32,7 @@
         {% for asset in assets %}
         <div class="asset-card" data-name="{{ asset.name|lower }}" data-category="{{ asset.category|default('')|lower }}" data-serial="{{ asset.serial|lower }}">
             <div class="asset-icon">
-                {# ========== FIXED: Category-based Icons ========== #}
+                {# ========== Category-based Icons ========== #}
                 {% if asset.category|lower in ['laptop', 'notebook', 'macbook'] %}
                     <i class="fas fa-laptop"></i>
                 {% elif asset.category|lower in ['monitor', 'screen', 'display'] %}

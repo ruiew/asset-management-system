@@ -481,7 +481,6 @@ def api_report(report_type):
         })
     
     elif report_type == 'maintenance':
-        # ========== FIXED: Use string concatenation instead of printf ==========
         query = '''
             SELECT 
                 'M-' || substr('00' || maintenance.id, -3) as id,

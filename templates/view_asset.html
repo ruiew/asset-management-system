@@ -16,7 +16,7 @@
     <div class="asset-detail-card">
         <div class="detail-header">
             <div class="detail-icon">
-                {# ========== FIXED: Category-based Icons ========== #}
+                {# ========== Category-based Icons ========== #}
                 {% if asset.category|lower in ['laptop', 'notebook', 'macbook'] %}
                     <i class="fas fa-laptop"></i>
                 {% elif asset.category|lower in ['monitor', 'screen', 'display'] %}
@@ -69,7 +69,7 @@
             </div>
             <div class="detail-item">
                 <label>Date Added</label>
-                {# ====== FIXED: Use a default value since assigned_date doesn't exist ====== #}
+                {# ====== : Use a default value since assigned_date doesn't exist ====== #}
                 <p>N/A</p>
             </div>
         </div>

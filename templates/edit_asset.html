@@ -24,7 +24,7 @@
         {% endif %}
     {% endwith %}
 
-    {# ====== FIXED: Use url_for for proper URL generation ====== #}
+    {# ====== Use url_for for proper URL generation ====== #}
     <form method="POST" action="{{ url_for('edit_asset', asset_id=asset.id) }}" id="editForm" novalidate>
         <div class="form-group">
             <label for="name">Asset Name <span class="required">*</span></label>
