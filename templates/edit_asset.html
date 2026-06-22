@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Asset{% endblock %}
+
+{% block welcome %}
+<h1 style="font-family: 'Yeseva One', cursive; font-weight: normal; font-size: 26px; color: #071b5e; margin: 0;">
+    Edit Asset
+</h1>
+<p style="font-size: 14px; color: #888; margin: 5px 0 0 0;">
+    Update asset details.
+</p>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    {# ====== FLASH MESSAGES - base.html already has them, but keeping for category-specific styling ====== #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-message {% if category == 'error' %}flash-error{% elif category == 'success' %}flash-success{% endif %}" style="margin-bottom: 15px;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {# ====== FIXED: Use url_for for proper URL generation ====== #}
+    <form method="POST" action="{{ url_for('edit_asset', asset_id=asset.id) }}" id="editForm" novalidate>
+        <div class="form-group">
+            <label for="name">Asset Name <span class="required">*</span></label>
+            <input type="text" id="name" name="name" value="{{ asset.name }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="serial">Serial Number <span class="required">*</span></label>
+            <input type="text" id="serial" name="serial" value="{{ asset.serial }}" required>
+            <div id="serialError" style="color: #dc3545; font-size: 13px; margin-top: 5px; display: none;"></div>
+            <div id="serialSuccess" style="color: #28a745; font-size: 13px; margin-top: 5px; display: none;">
+                ✅ Serial number is available
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="category">Category</label>
+            <input type="text" id="category" name="category" value="{{ asset.category|default('') }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                <option value="Available" {% if asset.status == 'Available' %}selected{% endif %}>Available</option>
+                <option value="Assigned" {% if asset.status == 'Assigned' %}selected{% endif %}>Assigned</option>
+                <option value="Maintenance" {% if asset.status == 'Maintenance' %}selected{% endif %}>Maintenance</option>
+            </select>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn-primary" id="submitBtn">
+                <i class="fas fa-save"></i> Update Asset
+            </button>
+            <a href="{{ url_for('manage_assets') }}" class="btn-secondary">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<style>
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.flash-error {
+    background: #ffebee !important;
+    color: #c62828 !important;
+    border-left: 4px solid #c62828 !important;
+}
+.flash-success {
+    background: #e8f5e9 !important;
+    color: #2e7d32 !important;
+    border-left: 4px solid #2e7d32 !important;
+}
+.flash-message {
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+.form-group {
+    margin-bottom: 20px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+}
+.form-group .required {
+    color: #dc3545;
+}
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: 0.3s;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #4a7aff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74,122,255,0.15);
+}
+.form-group input.error {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220,53,69,0.15);
+}
+.form-group input.success {
+    border-color: #28a745;
+    box-shadow: 0 0 0 3px rgba(40,167,69,0.15);
+}
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+.form-actions a {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.btn-primary i, .btn-secondary i {
+    margin-right: 5px;
+}
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+</style>
+
+{% block extra_js %}
+<script>
+// ========== DOM ELEMENTS ==========
+const serialInput = document.getElementById('serial');
+const serialError = document.getElementById('serialError');
+const serialSuccess = document.getElementById('serialSuccess');
+const submitBtn = document.getElementById('submitBtn');
+const form = document.getElementById('editForm');
+const originalSerial = serialInput?.value || '';
+let isSerialValid = true;
+let isChecking = false;
+let checkTimeout;
+
+// ========== REAL-TIME SERIAL VALIDATION ==========
+serialInput?.addEventListener('input', function() {
+    const serial = this.value.trim();
+    
+    clearTimeout(checkTimeout);
+    
+    // If serial hasn't changed, don't check
+    if (serial === originalSerial) {
+        serialError.style.display = 'none';
+        serialSuccess.style.display = 'none';
+        this.classList.remove('error', 'success');
+        isSerialValid = true;
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Asset';
+        return;
+    }
+    
+    if (serial.length < 2) {
+        serialError.style.display = 'none';
+        serialSuccess.style.display = 'none';
+        this.classList.remove('error', 'success');
+        isSerialValid = true;
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Asset';
+        return;
+    }
+    
+    isChecking = true;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+    
+    checkTimeout = setTimeout(() => {
+        fetch(`/api/check-serial?serial=${encodeURIComponent(serial)}`)
+            .then(response => response.json())
+            .then(data => {
+                isChecking = false;
+                if (data.exists) {
+                    serialError.textContent = `❌ Serial "${serial}" already exists!`;
+                    serialError.style.display = 'block';
+                    serialSuccess.style.display = 'none';
+                    this.classList.add('error');
+                    this.classList.remove('success');
+                    isSerialValid = false;
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Asset';
+                } else {
+                    serialError.style.display = 'none';
+                    serialSuccess.style.display = 'block';
+                    this.classList.remove('error');
+                    this.classList.add('success');
+                    isSerialValid = true;
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Asset';
+                }
+            })
+            .catch(() => {
+                isChecking = false;
+                isSerialValid = true;
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Asset';
+            });
+    }, 500);
+});
+
+// ========== FORM SUBMIT VALIDATION ==========
+form?.addEventListener('submit', function(e) {
+    const serial = serialInput.value.trim();
+    const name = document.getElementById('name').value.trim();
+    
+    if (!name) {
+        e.preventDefault();
+        alert('❌ Please enter an asset name.');
+        document.getElementById('name').focus();
+        return;
+    }
+    
+    if (!serial) {
+        e.preventDefault();
+        alert('❌ Please enter a serial number.');
+        serialInput.focus();
+        return;
+    }
+    
+    if (isChecking) {
+        e.preventDefault();
+        alert('⏳ Please wait, checking serial number...');
+        return;
+    }
+    
+    if (!isSerialValid && serial !== originalSerial) {
+        e.preventDefault();
+        alert('❌ This serial number already exists. Please use a unique serial number.');
+        serialInput.focus();
+        return;
+    }
+    
+    // Show loading state
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+});
+</script>
+{% endblock %}
+{% endblock %}
