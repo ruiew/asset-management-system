@@ -30,7 +30,6 @@ asset-management-system/
 ├── fams.py                 	# Main Flask application (run this)
 ├── config.py               	# Configuration settings
 ├── init_db.py              	# Database setup (run once)
-├── requirements.txt        	# Python dependencies
 ├── readme.txt              	# This file
 ├── models/                 	# Database models
 │   ├── __init__.py
@@ -39,8 +38,6 @@ asset-management-system/
 ├── static/                 	# Static files
 │   ├── css/
 │   │   └── style.css       	# Main stylesheet
-│   ├── js/
-│   │   └── script.js       	# JavaScript
 │   └── images/
 │       └── capi-logo.png   	# Logo
 ├── templates/              	# HTML pages
