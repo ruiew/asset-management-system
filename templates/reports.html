@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+
+{% block title %}Reports{% endblock %}
+
+{% block welcome %}
+<h1 style="font-family: 'Yeseva One', cursive; font-weight: normal; font-size: 26px; color: #071b5e; margin: 0;">
+    Welcome back, {{ session.get('name', 'Admin') }}!
+</h1>
+<p style="font-size: 14px; color: #888; margin: 5px 0 0 0;">
+    Generate and view reports.
+</p>
+{% endblock %}
+
+{% block content %}
+<div class="reports-container">
+    <div class="report-filters">
+        <h3>Report Generation</h3>
+        
+        <div class="filter-group">
+            <label>Report Type</label>
+            <select id="reportType" onchange="updateReportPreview()">
+                <option value="asset">Asset Summary</option>
+                <option value="maintenance">Maintenance Report</option>
+                <option value="assignment">Assignment Report</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label>Date Range</label>
+            <input type="date" id="startDate">
+            <span>to</span>
+            <input type="date" id="endDate">
+        </div>
+        
+        <button class="btn-primary" onclick="generateReport()">
+            <i class="fas fa-file-pdf"></i> Generate Report
+        </button>
+    </div>
+
+    <div class="report-preview">
+        <h3 id="reportTitle">Asset Summary Report</h3>
+        <p class="preview-note" id="reportNote">Overview of all assets by category</p>
+        
+        <div id="reportContent">
+            <div style="overflow-x: auto;">
+                <table class="preview-table" id="reportTable">
+                    <thead id="reportHeader">
+                        <tr>
+                            <th>Category</th>
+                            <th>Assigned</th>
+                            <th>Available</th>
+                            <th>Maintenance</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportBody">
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: #999;">Click "Generate Report" to load data</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div style="margin-top: 15px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;" id="summaryCards">
+                <div style="background: #e8f5e9; padding: 10px; border-radius: 8px; text-align: center;">
+                    <strong id="totalAssets">0</strong>
+                    <p style="margin: 0; font-size: 12px; color: #666;">Total Assets</p>
+                </div>
+                <div style="background: #e3f2fd; padding: 10px; border-radius: 8px; text-align: center;">
+                    <strong id="assignedAssets">0</strong>
+                    <p style="margin: 0; font-size: 12px; color: #666;">Assigned</p>
+                </div>
+                <div style="background: #fff3e0; padding: 10px; border-radius: 8px; text-align: center;">
+                    <strong id="availableAssets">0</strong>
+                    <p style="margin: 0; font-size: 12px; color: #666;">Available</p>
+                </div>
+                <div style="background: #ffebee; padding: 10px; border-radius: 8px; text-align: center;">
+                    <strong id="maintenanceAssets">0</strong>
+                    <p style="margin: 0; font-size: 12px; color: #666;">Maintenance</p>
+                </div>
+            </div>
+        </div>
+        
+        <button class="btn-secondary" style="margin-top: 15px;" onclick="downloadCSV()">
+            <i class="fas fa-download"></i> Download Report (CSV)
+        </button>
+    </div>
+</div>
+
+<script>
+
+
+// Report type configurations
+const reportConfigs = {
+    'asset': {
+        title: 'Asset Summary Report',
+        note: 'Overview of all assets by category',
+        headers: ['Category', 'Assigned', 'Available', 'Maintenance', 'Total'],
+        summaryLabels: ['Total Assets', 'Assigned', 'Available', 'Maintenance'],
+        summaryKeys: ['total', 'assigned', 'available', 'maintenance']
+    },
+    'maintenance': {
+        title: 'Maintenance Report',
+        note: 'Overview of all maintenance records',
+        headers: ['ID', 'Asset Name', 'Date', 'Type', 'Status', 'Cost (RM)'],
+        summaryLabels: ['Total Records', 'Completed', 'In Progress', 'Scheduled'],
+        summaryKeys: ['total', 'completed', 'in_progress', 'scheduled']
+    },
+    'assignment': {
+        title: 'Assignment Report',
+        note: 'Overview of all asset assignments',
+        headers: ['Asset ID', 'Asset Name', 'Assigned To', 'Status', 'Assigned Date'],
+        summaryLabels: ['Total Assignments', 'Active', 'Available'],
+        summaryKeys: ['total', 'active', 'available']
+    }
+};
+
+function updateReportPreview() {
+    const type = document.getElementById('reportType').value;
+    const config = reportConfigs[type];
+    
+    document.getElementById('reportTitle').textContent = config.title;
+    document.getElementById('reportNote').textContent = config.note;
+    
+    // Update table headers
+    const header = document.getElementById('reportHeader');
+    header.innerHTML = '<tr>' + config.headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
+    
+    // Reset body
+    const body = document.getElementById('reportBody');
+    const colspan = config.headers.length;
+    body.innerHTML = `<tr><td colspan="${colspan}" style="text-align: center; color: #999;">Click "Generate Report" to load data</td></tr>`;
+    
+    // Reset summary numbers
+    const keys = config.summaryKeys;
+    const cards = document.querySelectorAll('#summaryCards > div strong');
+    cards.forEach((el, index) => {
+        if (index < keys.length) {
+            el.textContent = '0';
+        }
+    });
+    
+    // Reset summary labels
+    const labels = config.summaryLabels;
+    const labelCards = document.querySelectorAll('#summaryCards > div p');
+    labelCards.forEach((el, index) => {
+        if (index < labels.length) {
+            el.textContent = labels[index];
+        }
+    });
+}
+
+function generateReport() {
+    const reportType = document.getElementById('reportType').value;
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    const body = document.getElementById('reportBody');
+    const config = reportConfigs[reportType];
+    
+    if (startDate && endDate && startDate > endDate) {
+        alert('❌ Start date cannot be after end date!');
+        return;
+    }
+    
+    const colspan = config.headers.length;
+    body.innerHTML = `<tr><td colspan="${colspan}" style="text-align: center; color: #666;">⏳ Generating report...</td></tr>`;
+    
+    let url = `/api/report/${reportType}`;
+    const params = [];
+    if (startDate) params.push(`start=${startDate}`);
+    if (endDate) params.push(`end=${endDate}`);
+    if (params.length) url += '?' + params.join('&');
+    
+    // Add timeout to fetch
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    
+    fetch(url, { signal: controller.signal })
+        .then(response => {
+            clearTimeout(timeoutId);
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                body.innerHTML = `<tr><td colspan="${colspan}" style="text-align: center; color: #dc3545;">❌ ${data.error}</td></tr>`;
+                return;
+            }
+            
+            let html = '';
+            if (data.rows && data.rows.length > 0) {
+                data.rows.forEach(row => {
+                    html += '<tr>';
+                    row.forEach(cell => {
+                        html += `<td>${cell || '-'}</td>`;
+                    });
+                    html += '</tr>';
+                });
+            } else {
+                html = `<tr><td colspan="${colspan}" style="text-align: center; color: #999;">No data available</td></tr>`;
+            }
+            body.innerHTML = html;
+            
+            // Update summary numbers
+            if (data.summary) {
+                const keys = config.summaryKeys;
+                const cards = document.querySelectorAll('#summaryCards > div strong');
+                cards.forEach((el, index) => {
+                    if (index < keys.length) {
+                        el.textContent = data.summary[keys[index]] || 0;
+                    }
+                });
+            }
+            
+            alert('✅ Report generated successfully!');
+        })
+        .catch(error => {
+            clearTimeout(timeoutId);
+            if (error.name === 'AbortError') {
+                body.innerHTML = `<tr><td colspan="${colspan}" style="text-align: center; color: #dc3545;">❌ Request timed out. Please try again.</td></tr>`;
+            } else {
+                console.error('Error:', error);
+                body.innerHTML = `<tr><td colspan="${colspan}" style="text-align: center; color: #dc3545;">❌ Error generating report. Please try again.</td></tr>`;
+            }
+            alert('❌ Error generating report. Please check console for details.');
+        });
+}
+
+function downloadCSV() {
+    const type = document.getElementById('reportType').value;
+    const config = reportConfigs[type];
+    const table = document.getElementById('reportTable');
+    const rows = table.querySelectorAll('tr');
+    
+    let csv = '';
+    let hasData = false;
+    let dataRows = 0;
+    
+    rows.forEach(row => {
+        const cols = row.querySelectorAll('th, td');
+        const rowData = [];
+        let hasContent = false;
+        
+        cols.forEach(col => {
+            let text = col.textContent.trim();
+            // Skip placeholder messages
+            if (text === 'Click "Generate Report" to load data' || 
+                text.includes('Generating report') || 
+                text.includes('Error generating') ||
+                text === 'No data available' ||
+                text.includes('No assets match')) {
+                return;
+            }
+            if (text) hasContent = true;
+            if (text.includes(',') || text.includes('"')) {
+                text = '"' + text.replace(/"/g, '""') + '"';
+            }
+            rowData.push(text);
+        });
+        
+        if (rowData.length > 0 && hasContent) {
+            csv += rowData.join(',') + '\n';
+            hasData = true;
+            dataRows++;
+        }
+    });
+    
+    // Check if we actually have data rows (not just headers)
+    if (!hasData || dataRows <= 1) {
+        alert('⚠️ No data to download. Please generate a report first.');
+        return;
+    }
+    
+    // Add summary data
+    csv += '\n\nSummary:\n';
+    const labels = config.summaryLabels;
+    const cards = document.querySelectorAll('#summaryCards > div strong');
+    cards.forEach((el, index) => {
+        if (index < labels.length) {
+            csv += `${labels[index]},${el.textContent}\n`;
+        }
+    });
+    
+    csv += `\nGenerated,${new Date().toLocaleString()}\n`;
+    
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${type}_report_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    alert('✅ CSV downloaded successfully!');
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateReportPreview();
+});
+</script>
+{% endblock %}

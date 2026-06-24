@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}View Asset{% endblock %}
+
+{% block welcome %}
+<h1 style="font-family: 'Yeseva One', cursive; font-weight: normal; font-size: 26px; color: #071b5e; margin: 0;">
+    Asset Details
+</h1>
+<p style="font-size: 14px; color: #888; margin: 5px 0 0 0;">
+    View complete asset information.
+</p>
+{% endblock %}
+
+{% block content %}
+<div class="view-asset-container">
+    <div class="asset-detail-card">
+        <div class="detail-header">
+            <div class="detail-icon">
+                {# ========== Category-based Icons ========== #}
+                {% if asset.category|lower in ['laptop', 'notebook', 'macbook'] %}
+                    <i class="fas fa-laptop"></i>
+                {% elif asset.category|lower in ['monitor', 'screen', 'display'] %}
+                    <i class="fas fa-desktop"></i>
+                {% elif asset.category|lower in ['printer', 'scanner'] %}
+                    <i class="fas fa-print"></i>
+                {% elif asset.category|lower in ['phone', 'mobile', 'smartphone'] %}
+                    <i class="fas fa-phone"></i>
+                {% elif asset.category|lower == 'tablet' %}
+                    <i class="fas fa-tablet-alt"></i>
+                {% elif asset.category|lower == 'server' %}
+                    <i class="fas fa-server"></i>
+                {% elif asset.category|lower == 'projector' %}
+                    <i class="fas fa-video"></i>
+                {% elif asset.category|lower == 'camera' %}
+                    <i class="fas fa-camera"></i>
+                {% else %}
+                    <i class="fas fa-box"></i>
+                {% endif %}
+            </div>
+            <div>
+                <h2>{{ asset.name }}</h2>
+                <p class="asset-id">Asset ID: A-{{ "%03d"|format(asset.id) }}</p>
+            </div>
+            <span class="status-badge {{ asset.status|lower }}" style="font-size: 16px; padding: 8px 20px;">
+                {{ asset.status|default('Available') }}
+            </span>
+        </div>
+        
+        <div class="detail-grid">
+            <div class="detail-item">
+                <label>Serial Number</label>
+                <p>{{ asset.serial }}</p>
+            </div>
+            <div class="detail-item">
+                <label>Category</label>
+                <p>{{ asset.category|default('Uncategorized') }}</p>
+            </div>
+            <div class="detail-item">
+                <label>Assigned To</label>
+                <p>{{ asset.assigned_to_name|default('Not Assigned') }}</p>
+            </div>
+            <div class="detail-item">
+                <label>Assigned Email</label>
+                <p>{{ asset.assigned_to_email|default('N/A') }}</p>
+            </div>
+            <div class="detail-item">
+                <label>Status</label>
+                <p><span class="status-badge {{ asset.status|lower }}">{{ asset.status|default('Available') }}</span></p>
+            </div>
+            <div class="detail-item">
+                <label>Date Added</label>
+                {# ====== : Use a default value since assigned_date doesn't exist ====== #}
+                <p>N/A</p>
+            </div>
+        </div>
+        
+        <div class="detail-actions">
+            <a href="{{ url_for('edit_asset', asset_id=asset.id) }}" class="btn-primary">
+                <i class="fas fa-edit"></i> Edit Asset
+            </a>
+            <a href="{{ url_for('manage_assets') }}" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Assets
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.view-asset-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.asset-detail-card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.detail-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f0f0f0;
+    margin-bottom: 20px;
+}
+
+.detail-icon {
+    width: 60px;
+    height: 60px;
+    background: #eef3ff;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #4a7aff;
+}
+
+.detail-header h2 {
+    margin: 0;
+    color: #071b5e;
+}
+
+.detail-header .asset-id {
+    color: #888;
+    font-size: 14px;
+    margin: 0;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.detail-item label {
+    font-weight: 600;
+    color: #666;
+    font-size: 13px;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.detail-item p {
+    margin: 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.detail-actions {
+    display: flex;
+    gap: 15px;
+    padding-top: 20px;
+    border-top: 2px solid #f0f0f0;
+}
+
+.detail-actions a {
+    text-decoration: none;
+}
+
+@media (max-width: 600px) {
+    .detail-header {
+        flex-wrap: wrap;
+    }
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

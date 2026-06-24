@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Assign Asset{% endblock %}
+
+{% block welcome %}
+<h1 style="font-family: 'Yeseva One', cursive; font-weight: normal; font-size: 26px; color: #071b5e; margin: 0;">
+    Welcome back, {{ session.get('name', 'Admin') }}!
+</h1>
+<p style="font-size: 14px; color: #888; margin: 5px 0 0 0;">
+    Assign assets to staff members.
+</p>
+{% endblock %}
+
+{% block content %}
+<div class="assign-container">
+    <div class="assign-column">
+        <h3>Select Asset</h3>
+        <div class="search-box">
+            <input type="text" placeholder="Search by asset name..." id="assetSearch">
+        </div>
+        <div class="asset-list" id="assetList">
+            {% for asset in assets %}
+            <div class="asset-item" data-asset-id="{{ asset.id }}" onclick="selectAsset(this)">
+                <span class="asset-code">A-{{ "%03d"|format(asset.id) }}</span>
+                <span class="asset-name">{{ asset.name }}</span>
+                <span class="asset-category">{{ asset.category|default('Uncategorized') }}</span>
+            </div>
+            {% else %}
+            <div class="asset-item" style="color: #999;">No available assets</div>
+            {% endfor %}
+        </div>
+        <p class="showing-info">Showing {{ assets|length }} available assets</p>
+    </div>
+
+    <div class="assign-column">
+        <h3>Select Staff</h3>
+        <div class="search-box">
+            <input type="text" placeholder="Search by name..." id="staffSearch">
+        </div>
+        <div class="staff-list" id="staffList">
+            {% for user in users %}
+            <div class="staff-item" data-user-id="{{ user.id }}" onclick="selectStaff(this)">
+                <span class="staff-code">{{ user.email.split('@')[0]|upper }}</span>
+                <span class="staff-name">{{ user.name }}</span>
+                <span class="staff-dept">{{ user.department|default('Staff') }}</span>
+            </div>
+            {% else %}
+            <div class="staff-item" style="color: #999;">No staff members found</div>
+            {% endfor %}
+        </div>
+        <p class="showing-info">Showing {{ users|length }} staff members</p>
+    </div>
+</div>
+
+<div class="assignment-summary">
+    <h3>Assignment Summary</h3>
+    <div class="summary-card">
+        <p><strong>Selected Asset:</strong> <span id="selectedAsset" style="color: #4a7aff; font-weight: 600;">None selected</span></p>
+        <p><strong>Selected Staff:</strong> <span id="selectedStaff" style="color: #4a7aff; font-weight: 600;">None selected</span></p>
+        <form method="POST" action="{{ url_for('assign_asset') }}" id="assignForm">
+            <input type="hidden" name="asset_id" id="assetIdInput">
+            <input type="hidden" name="user_id" id="userIdInput">
+            <button type="submit" class="btn-primary" id="confirmBtn" disabled>Confirm Assignment</button>
+        </form>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn-secondary">Back To Dashboard</a>
+    </div>
+</div>
+
+<script>
+
+function selectAsset(element) {
+    // Check if already selected
+    const isSelected = element.style.background === '#e8f0fe' || 
+                       element.style.background === 'rgb(232, 240, 254)';
+    
+    // Reset all assets
+    document.querySelectorAll('.asset-item').forEach(i => {
+        i.style.background = '';
+        i.style.borderLeft = '3px solid transparent';
+    });
+    
+    if (!isSelected) {
+        // Select this asset
+        element.style.background = '#e8f0fe';
+        element.style.borderLeft = '3px solid #4a7aff';
+        document.getElementById('assetIdInput').value = element.dataset.assetId;
+        document.getElementById('selectedAsset').textContent = element.querySelector('.asset-name').textContent;
+        document.getElementById('selectedAsset').style.color = '#071b5e';
+    } else {
+        // Deselect
+        document.getElementById('assetIdInput').value = '';
+        document.getElementById('selectedAsset').textContent = 'None selected';
+        document.getElementById('selectedAsset').style.color = '#4a7aff';
+    }
+    checkSelection();
+}
+
+function selectStaff(element) {
+    // Check if already selected
+    const isSelected = element.style.background === '#e8f0fe' || 
+                       element.style.background === 'rgb(232, 240, 254)';
+    
+    // Reset all staff
+    document.querySelectorAll('.staff-item').forEach(i => {
+        i.style.background = '';
+        i.style.borderLeft = '3px solid transparent';
+    });
+    
+    if (!isSelected) {
+        // Select this staff
+        element.style.background = '#e8f0fe';
+        element.style.borderLeft = '3px solid #4a7aff';
+        document.getElementById('userIdInput').value = element.dataset.userId;
+        document.getElementById('selectedStaff').textContent = element.querySelector('.staff-name').textContent;
+        document.getElementById('selectedStaff').style.color = '#071b5e';
+    } else {
+        // Deselect
+        document.getElementById('userIdInput').value = '';
+        document.getElementById('selectedStaff').textContent = 'None selected';
+        document.getElementById('selectedStaff').style.color = '#4a7aff';
+    }
+    checkSelection();
+}
+
+function checkSelection() {
+    const assetId = document.getElementById('assetIdInput').value;
+    const userId = document.getElementById('userIdInput').value;
+    document.getElementById('confirmBtn').disabled = !(assetId && userId);
+}
+
+
+document.getElementById('assignForm')?.addEventListener('submit', function() {
+    const btn = document.getElementById('confirmBtn');
+    if (!btn.disabled) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Assigning...';
+    }
+});
+
+// ========== Search Functionality ==========
+document.getElementById('assetSearch')?.addEventListener('keyup', function() {
+    const query = this.value.toLowerCase();
+    document.querySelectorAll('.asset-item').forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(query) ? 'flex' : 'none';
+    });
+});
+
+document.getElementById('staffSearch')?.addEventListener('keyup', function() {
+    const query = this.value.toLowerCase();
+    document.querySelectorAll('.staff-item').forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(query) ? 'flex' : 'none';
+    });
+});
+</script>
+
+<style>
+.asset-item, .staff-item {
+    cursor: pointer;
+    border-left: 3px solid transparent;
+}
+.asset-item:hover, .staff-item:hover {
+    background: #f0f4ff;
+}
+</style>
+{% endblock %}

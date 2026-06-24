@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Staff Dashboard{% endblock %}
+
+{% block welcome %}
+<h1 style="font-family: 'Yeseva One', cursive; font-weight: normal; font-size: 26px; color: #071b5e; margin: 0;">
+    Welcome back, {{ session.get('name', 'Staff') }}!
+</h1>
+<p style="font-size: 14px; color: #888; margin: 5px 0 0 0;">
+    Here is your quick overview.
+</p>
+{% endblock %}
+
+{% block content %}
+<!-- Statistics Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-box"></i></div>
+        <div class="stat-info">
+            <h3>{{ assets|length|default(0) }}</h3>
+            <p>My Assets</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-tools"></i></div>
+        <div class="stat-info">
+            {# ========== Use backend-passed value ========== #}
+            <h3>{{ maintenance_count|default(0) }}</h3>
+            <p>Under Maintenance</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
+        <div class="stat-info">
+            <h3>{{ assets|length|default(0) }}</h3>
+            <p>Total Assignments</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+        <div class="stat-info">
+            <h3>{{ assets|length|default(0) }}</h3>
+            <p>Active Assets</p>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="quick-actions">
+    <h2>Quick Actions</h2>
+    <div class="action-cards">
+        <div class="action-card">
+            <i class="fas fa-box"></i>
+            <h4>View My Assets</h4>
+            <p>See all assets assigned to you</p>
+            <a href="{{ url_for('my_assets') }}" class="btn-primary">View</a>
+        </div>
+        <div class="action-card">
+            <i class="fas fa-tools"></i>
+            <h4>Report Maintenance</h4>
+            <p>Report an issue with your asset</p>
+            <a href="{{ url_for('maintenance') }}" class="btn-primary">Report</a>
+        </div>
+        <div class="action-card">
+            <i class="fas fa-file-alt"></i>
+            <h4>My Requests</h4>
+            <p>Track your asset requests</p>
+            <a href="{{ url_for('reports') }}" class="btn-primary">View</a>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Overview of My Assets -->
+<div class="recent-activity">
+    <h2>My Recent Assets</h2>
+    {% if assets %}
+    <table class="activity-table">
+        <thead>
+            <tr>
+                <th>Asset Name</th>
+                <th>Serial</th>
+                <th>Category</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for asset in assets[:5] %}
+            <tr>
+                <td>{{ asset.name }}</td>
+                <td>{{ asset.serial }}</td>
+                <td>{{ asset.category|default('Uncategorized') }}</td>
+                <td>
+                    <span class="status-badge {{ asset.status|lower }}">
+                        {{ asset.status|default('Available') }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if assets|length > 5 %}
+    <div style="text-align: right; margin-top: 10px;">
+        <a href="{{ url_for('my_assets') }}" style="color: #4a7aff; text-decoration: underline;">View all {{ assets|length }} assets →</a>
+    </div>
+    {% endif %}
+    {% else %}
+    <p style="text-align: center; color: #999; padding: 30px 0;">
+        <i class="fas fa-box-open" style="font-size: 48px; display: block; margin-bottom: 10px;"></i>
+        No assets assigned to you yet.
+    </p>
+    {% endif %}
+</div>
+
+<style>
+.quick-actions {
+    margin-bottom: 25px;
+}
+.quick-actions h2 {
+    color: #071b5e;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+.action-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+.action-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    text-align: center;
+}
+.action-card i {
+    font-size: 32px;
+    color: #4a7aff;
+    margin-bottom: 10px;
+}
+.action-card h4 {
+    margin: 0 0 5px 0;
+    color: #071b5e;
+}
+.action-card p {
+    margin: 0 0 15px 0;
+    color: #888;
+    font-size: 13px;
+}
+.action-card .btn-primary {
+    padding: 6px 20px;
+    font-size: 13px;
+    text-decoration: none;
+    display: inline-block;
+}
+@media (max-width: 768px) {
+    .action-cards {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

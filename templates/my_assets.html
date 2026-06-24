@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}My Assets{% endblock %}
+
+{% block welcome %}
+<h1 style="font-family: 'Yeseva One', cursive; font-weight: normal; font-size: 26px; color: #071b5e; margin: 0;">
+    Welcome back, {{ session.get('name', 'Staff') }}!
+</h1>
+<p style="font-size: 14px; color: #888; margin: 5px 0 0 0;">
+    Here are all the assets currently assigned to you.
+</p>
+{% endblock %}
+
+{% block content %}
+<div class="staff-controls">
+    <div class="search-bar">
+        <input type="text" placeholder="Search by name or category..." id="searchInput" onkeyup="searchAssets()">
+        <button onclick="searchAssets()"><i class="fas fa-search"></i></button>
+    </div>
+    <button class="btn-secondary" onclick="location.reload()">
+        <i class="fas fa-sync-alt"></i> Refresh
+    </button>
+</div>
+
+<div class="my-assets-grid">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h2>My Assets</h2>
+        <span style="color: #888; font-size: 14px;">Total: <span id="assetCount">{{ assets|length }}</span> assets</span>
+    </div>
+    
+    <div class="asset-cards" id="assetCards">
+        {% for asset in assets %}
+        <div class="asset-card" data-name="{{ asset.name|lower }}" data-category="{{ asset.category|default('')|lower }}" data-serial="{{ asset.serial|lower }}">
+            <div class="asset-icon">
+                {# ========== Category-based Icons ========== #}
+                {% if asset.category|lower in ['laptop', 'notebook', 'macbook'] %}
+                    <i class="fas fa-laptop"></i>
+                {% elif asset.category|lower in ['monitor', 'screen', 'display'] %}
+                    <i class="fas fa-desktop"></i>
+                {% elif asset.category|lower in ['printer', 'scanner'] %}
+                    <i class="fas fa-print"></i>
+                {% elif asset.category|lower in ['phone', 'mobile', 'smartphone'] %}
+                    <i class="fas fa-phone"></i>
+                {% elif asset.category|lower == 'tablet' %}
+                    <i class="fas fa-tablet-alt"></i>
+                {% elif asset.category|lower == 'server' %}
+                    <i class="fas fa-server"></i>
+                {% elif asset.category|lower == 'projector' %}
+                    <i class="fas fa-video"></i>
+                {% elif asset.category|lower == 'camera' %}
+                    <i class="fas fa-camera"></i>
+                {% else %}
+                    <i class="fas fa-box"></i>
+                {% endif %}
+            </div>
+            <div class="asset-details">
+                <h4>{{ asset.name }}</h4>
+                <p><strong>Serial:</strong> {{ asset.serial }}</p>
+                <p><strong>Category:</strong> {{ asset.category|default('Uncategorized') }}</p>
+                <p><strong>Assigned:</strong> {{ asset.assigned_date|default('Not specified') }}</p>
+                <span class="status-badge {{ asset.status|lower }}">
+                    {{ asset.status|default('Available') }}
+                </span>
+            </div>
+        </div>
+        {% else %}
+        <div class="no-assets">
+            <i class="fas fa-box-open"></i>
+            <p>No assets assigned to you yet.</p>
+            <p style="font-size: 13px; margin-top: 5px;">
+                <a href="{{ url_for('maintenance') }}" style="color: #4a7aff; text-decoration: underline;">Request an asset</a>
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function searchAssets() {
+    const input = document.getElementById('searchInput');
+    const query = input.value.toLowerCase().trim();
+    const cards = document.querySelectorAll('.asset-card');
+    let visibleCount = 0;
+    
+    cards.forEach(card => {
+        const name = card.dataset.name || '';
+        const category = card.dataset.category || '';
+        const serial = card.dataset.serial || '';
+        
+        const matches = name.includes(query) || 
+                       category.includes(query) || 
+                       serial.includes(query);
+        
+        if (matches) {
+            card.style.display = 'flex';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    document.getElementById('assetCount').textContent = visibleCount;
+    
+    // Show "no results" message if nothing found
+    const noResults = document.getElementById('noResults');
+    if (visibleCount === 0 && cards.length > 0) {
+        if (!noResults) {
+            const container = document.getElementById('assetCards');
+            const msg = document.createElement('div');
+            msg.id = 'noResults';
+            msg.className = 'no-assets';
+            msg.innerHTML = `
+                <i class="fas fa-search"></i>
+                <p>No assets match your search.</p>
+                <p style="font-size: 13px; margin-top: 5px; color: #888;">
+                    Try adjusting your search terms.
+                </p>
+            `;
+            container.appendChild(msg);
+        }
+    } else {
+        if (noResults) {
+            noResults.remove();
+        }
+    }
+}
+
+document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        searchAssets();
+    }
+});
+</script>
+{% endblock %}

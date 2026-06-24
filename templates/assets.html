@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Asset Management{% endblock %}
+
+{% block welcome %}
+<h1 style="font-family: 'Yeseva One', cursive; font-weight: normal; font-size: 26px; color: #071b5e; margin: 0;">
+    Welcome back, {{ session.get('name', 'Admin') }}!
+</h1>
+<p style="font-size: 14px; color: #888; margin: 5px 0 0 0;">
+    Track and manage all company assets.
+</p>
+{% endblock %}
+
+{% block content %}
+{# ====== REMOVED DUPLICATE FLASH MESSAGES - base.html already handles this ====== #}
+
+<div class="page-header">
+    <div class="search-bar">
+        <input type="text" placeholder="Search by asset name..." id="searchInput">
+        <button onclick="searchAssets()"><i class="fas fa-search"></i></button>
+    </div>
+    <a href="/assets/add" class="btn-primary">
+        <i class="fas fa-plus"></i> Add New Asset
+    </a>
+</div>
+
+<div class="assets-grid">
+    <table class="assets-table">
+        <thead>
+            <tr>
+                <th>Asset ID</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Serial</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for asset in assets %}
+            <tr>
+                <td>A-{{ "%03d"|format(asset.id) }}</td>
+                <td>{{ asset.name }}</td>
+                <td>{{ asset.category|default('Uncategorized') }}</td>
+                <td>{{ asset.serial }}</td>
+                <td>
+                    <span class="status-badge {{ asset.status|lower }}">
+                        {{ asset.status|default('Available') }}
+                    </span>
+                </td>
+                <td>
+                    <a href="/assets/edit/{{ asset.id }}" class="btn-small" title="Edit Asset">
+                        <i class="fas fa-edit" style="color: #4a7aff;"></i>
+                    </a>
+                    <form method="POST" action="/assets/delete/{{ asset.id }}" style="display: inline;" onsubmit="return confirmDelete('{{ asset.name }}')">
+                        <button type="submit" class="btn-small" style="background: none; border: none; cursor: pointer;" title="Delete Asset">
+                            <i class="fas fa-trash" style="color: #dc3545;"></i>
+                        </button>
+                    </form>
+                    <a href="/assets/view/{{ asset.id }}" class="btn-small" title="View Asset">
+                        <i class="fas fa-eye" style="color: #17a2b8;"></i>
+                    </a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" style="text-align: center; color: #999;">No assets found. Add your first asset!</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+.flash-error {
+    background: #ffebee !important;
+    color: #c62828 !important;
+    border-left: 4px solid #c62828 !important;
+}
+.flash-success {
+    background: #e8f5e9 !important;
+    color: #2e7d32 !important;
+    border-left: 4px solid #2e7d32 !important;
+}
+.flash-message {
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+</style>
+
+<script>
+function searchAssets() {
+    const query = document.getElementById('searchInput').value.toLowerCase().trim();
+    const rows = document.querySelectorAll('.assets-table tbody tr');
+    let found = 0;
+    
+    // Remove existing "no results" message
+    const existingNoMsg = document.getElementById('noResults');
+    if (existingNoMsg) {
+        existingNoMsg.remove();
+    }
+    
+    rows.forEach(row => {
+        if (row.querySelector('td') && row.id !== 'noResults') {
+            const text = row.textContent.toLowerCase();
+            const match = text.includes(query);
+            row.style.display = match ? '' : 'none';
+            if (match) found++;
+        }
+    });
+    
+    // Show "no results" message if nothing found and there are rows
+    if (found === 0 && rows.length > 0) {
+        const tbody = document.querySelector('.assets-table tbody');
+        // Check if the only visible row is the "no assets" message
+        const noAssetsRow = document.querySelector('.assets-table tbody tr:only-child');
+        if (noAssetsRow && noAssetsRow.querySelector('td[colspan="6"]')) {
+            // This is the "No assets found" message, don't override it
+            return;
+        }
+        const msg = document.createElement('tr');
+        msg.id = 'noResults';
+        msg.innerHTML = `<td colspan="6" style="text-align: center; color: #999;">No assets match your search.</td>`;
+        tbody.appendChild(msg);
+    }
+}
+
+function confirmDelete(assetName) {
+    return confirm(`⚠️ Are you sure you want to delete "${assetName}"?\n\nThis action cannot be undone!`);
+}
+
+// Search on keyup with debounce
+let searchTimeout;
+document.getElementById('searchInput')?.addEventListener('keyup', function() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(searchAssets, 200);
+});
+</script>
+{% endblock %}

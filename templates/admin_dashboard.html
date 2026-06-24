@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block welcome %}
+<h1 style="font-family: 'Yeseva One', cursive; font-weight: normal; font-size: 26px; color: #071b5e; margin: 0;">
+    Welcome back, {{ session.get('name', 'Admin') }}!
+</h1>
+<p style="font-size: 14px; color: #888; margin: 5px 0 0 0;">
+    Here is your quick system overview.
+</p>
+{% endblock %}
+
+{% block content %}
+<!-- Statistics Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-boxes"></i></div>
+        <div class="stat-info">
+            <h3>{{ total_assets|default(0) }}</h3>
+            <p>Total Assets</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+        <div class="stat-info">
+            <h3>{{ assigned_assets|default(0) }}</h3>
+            <p>Assets in Use</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-tools"></i></div>
+        <div class="stat-info">
+            <h3>{{ maintenance_count|default(0) }}</h3>
+            <p>Assets under Maintenance</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-users"></i></div>
+        <div class="stat-info">
+            <h3>{{ total_users|default(0) }}</h3>
+            <p>Total Users</p>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="recent-activity">
+    <h2>Recent Activity</h2>
+    <table class="activity-table">
+        <thead>
+            <tr>
+                <th>Asset ID</th>
+                <th>Description</th>
+                <th>Activity Type</th>
+                <th>Admin</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for activity in recent_activity %}
+            <tr>
+                <td>{{ activity.asset_id }}</td>
+                <td>{{ activity.description }}</td>
+                <td><span class="badge assign">{{ activity.activity_type }}</span></td>
+                <td>{{ activity.admin|default('System') }}</td>
+                <td>{{ activity.date }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align: center; color: #999;">No recent activity</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

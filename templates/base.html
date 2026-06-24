@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CAPI FAMS{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Yeseva+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Floating Bubbles on Sidebar -->
+        <div class="sidebar-bubble1"></div>
+        <div class="sidebar-bubble2"></div>
+        <div class="sidebar-bubble3"></div>
+
+        <div class="sidebar-logo">
+            <img src="/static/images/capi-logo.png" alt="CAPI Logo">
+            <span>CAPI FAMS</span>
+        </div>
+        
+        <nav class="sidebar-nav">
+            {% if session.get('role') == 'admin' %}
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-item {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">
+                <i class="fas fa-chart-pie"></i>
+                <span>Dashboard</span>
+                {% if request.endpoint == 'admin_dashboard' %}<span class="nav-indicator"></span>{% endif %}
+            </a>
+            <a href="{{ url_for('manage_assets') }}" class="nav-item {% if request.endpoint == 'manage_assets' %}active{% endif %}">
+                <i class="fas fa-boxes"></i>
+                <span>Asset Management</span>
+                {% if request.endpoint == 'manage_assets' %}<span class="nav-indicator"></span>{% endif %}
+            </a>
+            <a href="{{ url_for('assign_asset') }}" class="nav-item {% if request.endpoint == 'assign_asset' %}active{% endif %}">
+                <i class="fas fa-user-plus"></i>
+                <span>Assign Asset</span>
+                {% if request.endpoint == 'assign_asset' %}<span class="nav-indicator"></span>{% endif %}
+            </a>
+            {% else %}
+            <a href="{{ url_for('staff_dashboard') }}" class="nav-item {% if request.endpoint == 'staff_dashboard' %}active{% endif %}">
+                <i class="fas fa-chart-pie"></i>
+                <span>Dashboard</span>
+                {% if request.endpoint == 'staff_dashboard' %}<span class="nav-indicator"></span>{% endif %}
+            </a>
+            <a href="{{ url_for('my_assets') }}" class="nav-item {% if request.endpoint == 'my_assets' %}active{% endif %}">
+                <i class="fas fa-box"></i>
+                <span>My Assets</span>
+                {% if request.endpoint == 'my_assets' %}<span class="nav-indicator"></span>{% endif %}
+            </a>
+            {% endif %}
+            
+            <a href="{{ url_for('maintenance') }}" class="nav-item {% if request.endpoint == 'maintenance' %}active{% endif %}">
+                <i class="fas fa-tools"></i>
+                <span>Maintenance</span>
+                {% if request.endpoint == 'maintenance' %}<span class="nav-indicator"></span>{% endif %}
+            </a>
+            
+            <a href="{{ url_for('reports') }}" class="nav-item {% if request.endpoint == 'reports' %}active{% endif %}">
+                <i class="fas fa-file-alt"></i>
+                <span>Reports</span>
+                {% if request.endpoint == 'reports' %}<span class="nav-indicator"></span>{% endif %}
+            </a>
+            
+            <a href="{{ url_for('logout') }}" class="nav-item logout" onclick="return confirm('Are you sure you want to logout?')">
+                    <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="welcome-text">
+                {% block welcome %}{% endblock %}
+            </div>
+            <div class="user-info">
+                <span>{{ session.get('name', 'User') }}</span>
+                <span class="role-badge">{{ session.get('role', 'staff')|title }}</span>
+            </div>
+        </div>
+
+        <div class="content-area">
+            {# ====== FLASH MESSAGES - SHOW ONCE ====== #}
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {% if category == 'error' %}flash-error{% elif category == 'success' %}flash-success{% endif %}" style="margin-bottom: 15px;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <script src="/static/js/script.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
