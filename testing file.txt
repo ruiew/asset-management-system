@@ -1,0 +1,77 @@
+# ==================== ORIGINAL ADD ASSET ROUTE (WITH BUG) ====================
+@app.route('/assets/add', methods=['GET', 'POST'])
+def add_assets():  # ❌ WRONG: Should be 'add_asset' (singular)
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login_page'))
+    
+    if request.method == 'POST':
+        name = request.form.get('name')
+        serial = request.form.get('serial')
+        category = request.form.get('category')
+        
+        # ❌ PROBLEM 1: No validation for empty fields
+        if name and serial:
+            # ❌ PROBLEM 2: Direct insert without checking for duplicates
+            Asset.create(name, serial, category)
+            flash('Asset added successfully!')
+            return redirect(url_for('manage_assets'))
+        else:
+            flash('Please fill in all required fields')
+    
+    return render_template('add_asset.html')
+
+
+
+
+asset.py
+
+# ==================== ORIGINAL Asset.create() METHOD (WITH BUG) ====================
+class Asset:
+    @staticmethod
+    def create(name, serial, category=None):
+        conn = Asset.get_db()
+        
+        # ❌ PROBLEM: No duplicate check before inserting!
+        conn.execute(
+            '''INSERT INTO assets (name, serial, category, status, created_at) 
+               VALUES (?, ?, ?, ?, ?)''',
+            (name, serial, category, 'Available', datetime.datetime.now())
+        )
+        conn.commit()
+        conn.close()
+
+
+
+
+add_asset.html
+
+<!-- ==================== ORIGINAL add_asset.html (No validation) ==================== -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-container">
+    <form method="POST" action="{{ url_for('add_assets') }}">  <!-- ❌ Wrong function name -->
+        <div class="form-group">
+            <label for="name">Asset Name <span class="required">*</span></label>
+            <input type="text" id="name" name="name" placeholder="e.g., Dell XPS Laptop" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="serial">Serial Number <span class="required">*</span></label>
+            <!-- ❌ NO duplicate check, NO real-time validation -->
+            <input type="text" id="serial" name="serial" placeholder="e.g., DELL-XPS-001" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="category">Category</label>
+            <input type="text" id="category" name="category" placeholder="e.g., Laptop, Monitor, Printer">
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Save Asset</button>
+            <a href="{{ url_for('assets_page') }}" class="btn-secondary">Cancel</a>  <!-- ❌ Wrong function name -->
+        </div>
+    </form>
+</div>
+{% endblock %}
+
